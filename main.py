@@ -2,7 +2,7 @@ import numpy as np
 import random
 
 seed = sum([ord(c) for c in 'Tuturururuuttuutut'])
-# np.random.seed(seed)
+np.random.seed(seed)
 
 ##### model config #####
 # Weapon number
@@ -17,24 +17,12 @@ K = np.random.uniform(low=0, high=1, size=(W, T))
 ##### GA config #####
 # number of chromosomes
 start_chromosomes = 80
-# population
-# P = np.random.randint(low=0, high=T, size=(start_chromosomes, W))
 
 def survival_fun(X, V, K):
     return np.sum(V * np.prod(np.power(1 - K, X), axis=0))
     
 def chromosome_to_X(chromosome, T):
-    # print(chromosome)
     return np.eye(T)[chromosome]
-
-# print(P[0])
-# print(chromosome_to_X(P[0], T))
-# print(np.power(1 - K, chromosome_to_X(P[0], T)))
-# print(np.prod( np.power(1 - K, chromosome_to_X(P[0], T)), axis=0))
-# print(survival_fun(chromosome_to_X(P[0], T), V, K))
-
-# na kolejne zajęcia - krzyżowanie
-
 
 good_genes = np.argmax(K * V, axis=1)
 
@@ -60,7 +48,6 @@ def mutate(A, mm):
 
 def select(P, P_values, D):
     D_values = np.array([survival_fun(chromosome_to_X(a, T), V, K) for a in D])
-    # all_values, all_chromosomes = np.concatenate((P_values, D_values)), np.concatenate((P, D))
     all_values = np.concatenate((P_values, D_values))
     all_chromosomes = np.concatenate((P, D))
     indices = np.argpartition(all_values, start_chromosomes)[:start_chromosomes]
@@ -69,10 +56,9 @@ def select(P, P_values, D):
     return new_P, new_values
     
 def generate_offspring(P):
-    # D=np.empty(shape=(start_chromosomes, W))
     D = []
     for i in range(0, start_chromosomes, 2):  
-        A, B = EX(P[i], P[i+1], 3)  #TODO MAKE RANDOM
+        A, B = EX(P[i], P[i+1], 3)  # TODO MAKE RANDOM
         D.append(A)
         D.append(B)
         mutate(D[i], 2) # TODO MAKE RANDOM
@@ -93,19 +79,7 @@ def simulate_world(turns):
         P, P_values = next_generation(P, P_values)
         
     idx = np.argmin(P_values)
-    return P_values[idx], P[idx]
+    return P_values[idx], P[idx] 
 
-p_val_min, p_min = simulate_world(10000)
+p_val_min, p_min = simulate_world(1000)
 print(p_val_min, p_min)
-# print(EX(A,B, 5))
-# a, b = EX(A,B, 5)
-# print(survival_fun(chromosome_to_X(A, T), V, K))
-# print(survival_fun(chromosome_to_X(B, T), V, K))
-# print(survival_fun(chromosome_to_X(a, T), V, K))
-# print(survival_fun(chromosome_to_X(b, T), V, K))
-# mutate(a, 2)
-# print(survival_fun(chromosome_to_X(a, T), V, K))
-
-
-# print(select([A,B], [survival_fun(chromosome_to_X(A, T), V, K), survival_fun(chromosome_to_X(B, T), V, K)], [a, b]))
-
