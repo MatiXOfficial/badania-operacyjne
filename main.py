@@ -1,12 +1,12 @@
 import numpy as np
-import random
+from matplotlib import pyplot as plt
 
 seed = sum([ord(c) for c in 'Tuturururuuttuutut'])
 np.random.seed(seed)
 
 ##### model config #####
 # Weapon number
-W = 60
+W = 50
 # Target number
 T = 40
 # Target values
@@ -14,9 +14,11 @@ V = np.random.uniform(low=1, high=10, size=(T))
 # Probability of target's destruction
 K = np.random.uniform(low=0, high=1, size=(W, T))
 
+np.random.seed()
+
 ##### GA config #####
 # number of chromosomes
-start_chromosomes = 80
+start_chromosomes = 50
 
 def survival_fun(X, V, K):
     return np.sum(V * np.prod(np.power(1 - K, X), axis=0))
@@ -25,10 +27,6 @@ def chromosome_to_X(chromosome, T):
     return np.eye(T)[chromosome]
 
 good_genes = np.argmax(K * V, axis=1)
-
-A = np.array([1, 1, 3, 3, 2, 0])
-B = np.array([2, 1, 2, 2, 3, 2])
-
 
 def EX(A, B, mc):   # crossover
     A, B = A.copy(), B.copy()
@@ -57,12 +55,16 @@ def select(P, P_values, D):
     
 def generate_offspring(P):
     D = []
-    for i in range(0, start_chromosomes, 2):  
-        A, B = EX(P[i], P[i+1], 3)  # TODO MAKE RANDOM
+    mc = min(int(np.random.gamma(1, 2)), W//4)
+    mm = min(int(np.random.gamma(1, 2)), W//4)
+    # mc = 3
+    # mm = 2
+    for i in range(0, start_chromosomes, 2):
+        A, B = EX(P[i], P[i+1], mc)
         D.append(A)
         D.append(B)
-        mutate(D[i], 2) # TODO MAKE RANDOM
-        mutate(D[i+1], 2) # TODO MAKE RANDOM
+        mutate(D[i], mm)
+        mutate(D[i+1], mm)
     D = np.array(D)
     return D
 
@@ -75,11 +77,23 @@ def simulate_world(turns):
     P_values = np.array([survival_fun(chromosome_to_X(a, T), V, K) for a in P])
     idx = np.argmin(P_values)
     print(P_values[idx], P[idx])
+    P_values_arr = []
     for _ in range(turns):
         P, P_values = next_generation(P, P_values)
-        
-    idx = np.argmin(P_values)
-    return P_values[idx], P[idx] 
+        idx = np.argmin(P_values)
+        P_values_arr.append(P_values[idx])
 
-p_val_min, p_min = simulate_world(1000)
+    idx = np.argmin(P_values)
+    return P_values[idx], P[idx], P_values_arr 
+
+p_val_min, p_min, P_values_arr = simulate_world(10000)
 print(p_val_min, p_min)
+
+def plot_P_values(P_values):
+    plt.plot(np.arange(1, len(P_values) + 1), P_values)
+    plt.title(f'W = {W}, T = {T}, start_chromosomes = {start_chromosomes}')
+    plt.xlabel('iterations')
+    plt.ylabel('cost function')
+    plt.show()
+
+plot_P_values(P_values_arr)
