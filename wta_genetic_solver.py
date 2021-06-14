@@ -30,10 +30,11 @@ class WTAGeneticSolver:
         """
         Use the genetic algorithm to try to find the optimal solution.
         :param n_turns: Number of turns in the simulation
-        :param report_interval: Interval between printed reports. If None, the interval is (10% * n_turns). If -1, the print nothing
+        :param report_interval: Interval between printed reports. If None, the interval is (10% * n_turns). If -1,
+                                then print nothing
         :param print_values: if True, print chromosomes with reports
-        :return: tuple: (found cost function, found solution (best chromosome), array of best cost function values in
-                         each iteration)
+        :return: tuple: (found cost function value, found solution (best chromosome), array of best cost function
+                        values in each iteration)
         """
         if report_interval is None:
             report_interval = 0.1 * n_turns

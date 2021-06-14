@@ -27,14 +27,14 @@ end = time.time()
 print(f'Genetic: elapsed time: {(end - start):0.2f} s')
 
 start = time.time()
-bf_val_min, bf_ass = bf_solver.solve_2()
+bf_val_min, bf_arr = bf_solver.solve_2()
 end = time.time()
 print(f'Brute force: elapsed time: {end - start}')
 
-# print(p_min == bf_ass)
-print(bf_val_min, bf_ass)
+# print(p_min == bf_arr)
+print(bf_val_min, bf_arr)
 
-# plot_weapon_assignment(W, T, V, p_min)
+plot_weapon_assignment(W, T, V, p_min)
 #
 n_runs = 10
 results = np.empty(10)
@@ -56,4 +56,4 @@ def plot_P_values(P_values):
     plt.show()
 
 
-# plot_P_values(P_values_arr)
+plot_P_values(P_values_arr)

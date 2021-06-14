@@ -1,5 +1,1 @@
-# BO 2021
-
-```
-int a = 5;
-```
+# Weapon Target Assignment problem - genetic solver
